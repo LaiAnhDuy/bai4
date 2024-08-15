@@ -1,38 +1,58 @@
-.App {
-  text-align: center;
+.app-custom {
+    font-family: 'Ubuntu', sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.content {
+  width: 85%;
+  margin: auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.item-custom {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  height: 55px;
+  background-color: #dbe2ef;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  padding-left: 10px;
+}
+.checkbox {
+  zoom: 1.5;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: 1px solid #7d7c7c;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
 }
 
-.App-link {
-  color: #61dafb;
+.checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 4px;
+  height: 10px;
+  border: solid #36cf00;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+.loading img {
+  width: 50vw;
+  height: 50vw;
+}
+@media (max-width: 768px) {
+  .content {
+  width: 95%;
   }
 }
