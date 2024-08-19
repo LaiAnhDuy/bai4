@@ -1,42 +1,40 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const Api = "https://65d455c53f1ab8c63434e588.mockapi.io/job"
+
+const apiRequest = async (method, url, data = null) => {
+  const config = {
+    method,
+    url,
+    data
+  }
+  const response = await axios(config)
+  return response.data
+}
+
 export const fetchAllJob = createAsyncThunk("users/fetchAllJob", async () => {
-  const response = await axios.get(
-    "https://65d455c53f1ab8c63434e588.mockapi.io/job"
-  );
-  return response.data;
+  return await apiRequest('get', Api)
 });
 
 export const fetchCreateJob = createAsyncThunk(
   "users/fetchCreateJob",
   async (data) => {
-    const response = await axios.post(
-      "https://65d455c53f1ab8c63434e588.mockapi.io/job",
-      data
-    );
-    return response.data;
+    return await apiRequest('post', Api, data)
   }
 );
 
 export const fetchUpdateChecked = createAsyncThunk(
   "users/fetchUpdateChecked",
   async ({id, checked}) => {
-    const response = await axios.put(
-      `https://65d455c53f1ab8c63434e588.mockapi.io/job/${id}`,
-      { checked : checked }
-    );
-    return response.data;
+    return await apiRequest('put', `${Api}/${id}`, {checked})
   }
 );
 
 export const fetchDeleteJob = createAsyncThunk(
   "users/fetchDeleteJob",
   async (id) => {
-    await axios.delete(
-      `https://65d455c53f1ab8c63434e588.mockapi.io/job/${id}`
-    );
-    return id;
+    return await apiRequest('delete', `${Api}/${id}`)
   }
 );
 
@@ -99,7 +97,7 @@ export const todoSlice = createSlice({
         state.isError = false;
       })
       .addCase(fetchDeleteJob.fulfilled, (state, action) => {
-        state.listJob = state.listJob.filter((job) => job.id !== action.payload);
+        state.listJob = state.listJob.filter((job) => job.id !== action.payload.id);
         state.isLoading = false;
         state.isError = false;
       })

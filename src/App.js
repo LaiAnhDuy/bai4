@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import "./App.css";
+import { useEffect, useRef } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
+import "./App.css";
 import {
   fetchAllJob,
   fetchCreateJob,
@@ -9,27 +11,18 @@ import {
 } from "./redux/slices/todoSlice.js";
 
 function App() {
-  const [job, setJob] = useState("");
   const dispatch = useDispatch();
   const listJob = useSelector((state) => state.todo.listJob);
   const isLoading = useSelector((state) => state.todo.isLoading);
   const isError = useSelector((state) => state.todo.isError);
-
   const inputRef = useRef();
 
   useEffect(() => {
     dispatch(fetchAllJob());
   }, []);
 
-  const handleAddJob = () => {
-    const input = job.trim();
-    if (!input) {
-      alert("Content cannot be empty!");
-      return;
-    }
-    dispatch(fetchCreateJob({ content: job }));
-    setJob("");
-    inputRef.current.focus();
+  const handleAddJob = (data) => {
+    dispatch(fetchCreateJob(data));
   };
 
   const handleUpdateChecked = (id, checked) => {
@@ -40,7 +33,7 @@ function App() {
     dispatch(fetchDeleteJob(id));
   };
 
-  if(isError){
+  if (isError) {
     alert("Have Error!");
   }
 
@@ -53,28 +46,46 @@ function App() {
       )}
       <div className="container ">
         <div className="row">
-          <div className="col-11 col-md-6 bg-white m-auto mt-3 rounded-3">
+          <div className="col-11 col-md-6 bg-white m-auto my-3 rounded-3">
             <div className="content">
               <p className="text-center fs-1 fw-border mt-2">To Do App</p>
-              <div className="input-group mb-3 w-75 mx-auto">
-                <input
-                  type="text"
-                  value={job}
-                  ref={inputRef}
-                  disabled={isLoading}
-                  className="form-control bg-body-secondary"
-                  placeholder="some words..."
-                  onChange={(e) => setJob(e.target.value)}
-                />
-                <button
-                  disabled={isLoading}
-                  className="btn btn-secondary"
-                  type="button"
-                  onClick={handleAddJob}
-                >
-                  +
-                </button>
-              </div>
+              <Formik
+                initialValues={{ content: "" }}
+                validationSchema={Yup.object({
+                  content: Yup.string().required("Input cannot be empty!"),
+                })}
+                onSubmit={(values, { setSubmitting, resetForm }) => {
+                  handleAddJob(values);
+                  resetForm();
+                  setSubmitting(false);
+                  inputRef.current.focus();
+                }}
+              >
+                {({ isSubmitting }) => (
+                  <Form>
+                    <div className="w-75 mx-auto">
+                      <div className="input-group mb-3">
+                        <Field
+                          name="content"
+                          type="text"
+                          innerRef={inputRef}
+                          placeholder="some words..."
+                          className="form-control bg-body-secondary"
+                        />
+
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="btn btn-secondary"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <ErrorMessage name="content" component="div" className="text-danger fs-6"/>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
               <hr />
               <div>
                 {listJob.map((item) => (
